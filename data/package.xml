@@ -1,0 +1,11 @@
+<package>
+  <name>hpp-quadcopter</name>
+  <version>0.1.0</version>
+  <description>
+    meshes for hpp-quadcopter.
+  </description>
+  <author>Joseph Mirabel</author>
+  <maintainer email="hpp@laas.fr">Joseph Mirabel</maintainer>
+  <license>LGPL v2</license>
+  <build_depend>hpp-corbaserver</build_depend>
+</package>

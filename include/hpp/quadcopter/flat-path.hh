@@ -19,16 +19,14 @@
 #ifndef HPP_QUADCOPTER_FLAT_PATH_HH
 # define HPP_QUADCOPTER_FLAT_PATH_HH
 
-# include <hpp/quadcopter/config.hh>
-# include <hpp/quadcopter/fwd.hh>
 # include <hpp/model/device.hh>
+
 # include <hpp/core/path.hh>
 
-/// TODO remove me
-namespace mav_planning_utils {
-    template <int N> class PolynomialTrajectory
-    {};
-}
+# include <mav_planning_utils/polynomial_trajectory.h>
+
+# include <hpp/quadcopter/config.hh>
+# include <hpp/quadcopter/fwd.hh>
 
 namespace hpp {
   namespace quadcopter {
@@ -107,15 +105,17 @@ namespace hpp {
       /// Get the initial configuration
       Configuration_t initial () const
       {
-        // FIXME
-        return Configuration_t();
+        Configuration_t out (outputSize());
+        operator() (out, timeRange().first);
+        return out;
       }
 
       /// Get the final configuration
       Configuration_t end () const
       {
-        // FIXME
-        return Configuration_t();
+        Configuration_t out (outputSize());
+        operator() (out, timeRange().second);
+        return out;
       }
 
     protected:

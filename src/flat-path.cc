@@ -16,13 +16,14 @@
 // hpp-quadcopter  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#include <hpp/util/debug.hh>
-#include <hpp/model/device.hh>
-#include <hpp/model/joint.hh>
-#include <hpp/model/joint-configuration.hh>
-#include <hpp/core/config-projector.hh>
-#include <hpp/core/projection-error.hh>
 #include <hpp/quadcopter/flat-path.hh>
+
+#include <hpp/util/debug.hh>
+
+#include <hpp/model/device.hh>
+
+#include <mav_msgs/conversions.h>
+#include <mav_planning_utils/trajectory_sampling.h>
 
 namespace hpp {
   namespace quadcopter {
@@ -69,8 +70,7 @@ namespace hpp {
 			const Trajectory_t& traj,
 			const YawTrajectory_t& yawTraj) :
       parent_t (
-          interval_t (0, 1.),
-          // interval_t (traj.getMinTime(), traj.getMaxTime()),
+          interval_t (traj.getMinTime(), traj.getMaxTime()),
           device->configSize (), device->numberDof ()),
       device_ (device),
       traj_ (traj), yawTraj_ (yawTraj)
@@ -84,8 +84,7 @@ namespace hpp {
 			const YawTrajectory_t& yawTraj,
 			ConstraintSetPtr_t constraints) :
       parent_t (
-          interval_t (0, 1.),
-          // interval_t (traj.getMinTime(), traj.getMaxTime()),
+          interval_t (traj.getMinTime(), traj.getMaxTime()),
           device->configSize (), device->numberDof (), constraints),
       device_ (device),
       traj_ (traj), yawTraj_ (yawTraj)
@@ -118,32 +117,25 @@ namespace hpp {
     bool FlatPath::impl_compute (ConfigurationOut_t result,
 				 value_type param) const
     {
-      /*
       mav_msgs::EigenTrajectoryPoint state;
-
-      if (param == timeRange ().first || timeRange ().second == 0) {
-        state = traj.
-	result = initial_;
-	return true;
-      }
-      if (param == timeRange ().second) {
-	result = end_;
-	return true;
-      }
+      mav_msgs::EigenMavState mav_state;
 
       // I get a SEGV when sampling_time == tmax
       // because some iterators get out of range.
-      if (sampling_time >= tmax) sampling_time = tmax * 0.9999999;
+      if (param == timeRange ().second) {
+        param -= (timeRange().second - timeRange().first) * 1e-5;
+      }
 
-      // mav_planning_utils::sampleTrajectory(trajectory, yaw_trajectory, sampling_time, &flat_state);
-      mav_planning_utils::sampleTrajectory(trajectory, yaw_trajectory, sampling_time, &state);
+      mav_planning_utils::sampleTrajectory(traj_, yawTraj_, param, &state);
       mav_msgs::EigenMavStateFromEigenTrajectoryPoint(state, &mav_state);
-      // State orientation is always identity
-      // std::cout << sampling_time << "\t: " << state.position_W.transpose()
-      // << ", " << state.orientation_W_B.coeffs().transpose() << std::endl;
+      // std::cout << sampling_time << "\t: " << mav_state.toString() << std::endl;
 
-      std::cout << sampling_time << "\t: " << mav_state.toString() << std::endl;
-      */
+      result.head<3>   (  ) = mav_state.position_W;
+      result           ( 3) = mav_state.orientation_W_B.w();
+      result.segment<3>( 4) = mav_state.orientation_W_B.vec();
+      result.segment<3>( 7) = mav_state.velocity_W;
+      result.segment<3>(10) = mav_state.angular_velocity_B;
+
       return true;
     }
 

@@ -62,13 +62,7 @@ namespace hpp {
 
       /// create a path between two configurations
       virtual PathPtr_t impl_compute (ConfigurationIn_t q1,
-				      ConfigurationIn_t q2) const
-      {
-	PathPtr_t path;
-	// PathPtr_t path = FlatPath::create (device_.lock (), q1, q2,
-					   // constraints ());
-	return path;
-      }
+				      ConfigurationIn_t q2) const;
     protected:
       /// Constructor with robot
       /// Weighed distance is created from robot

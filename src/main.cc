@@ -23,12 +23,6 @@
 // main function of the corba server
 int main (int argc, const char* argv[])
 {
-
-  // TODO Remove me. This is only to check that C++ 11 is used.
-  enum class Color { Red, Orange, Yellow, Green, Blue, Violet };
-  constexpr float a = 3.1415f;
-  auto b = a;
-
   // create a ProblemSolver instance.
   // This class is a container that does the interface between hpp-core library
   // and component to be running in a middleware like CORBA or ROS.

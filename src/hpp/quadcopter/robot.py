@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2014 CNRS
+# Copyright (c) 2016 CNRS
 # Author: Joseph Mirabel
 #
 # This file is part of hpp-quadcopter.
@@ -32,29 +32,14 @@ from hpp.corbaserver.robot import Robot as Parent
 class Robot (Parent):
     ##
     #  Information to retrieve urdf and srdf files.
-    packageName = "tp-rrt"
-    meshPackageName = "tp-rrt"
-    rootJointType = "planar"
+    packageName = "hpp-quadcopter"
+    meshPackageName = "hpp-quadcopter"
+    rootJointType = "freeflyer"
     ##
     #  Information to retrieve urdf and srdf files.
-    urdfName = "buggy"
+    urdfName = "quadcopter"
     urdfSuffix = ""
     srdfSuffix = ""
 
     def __init__ (self, robotName, load = True):
         Parent.__init__ (self, robotName, self.rootJointType, load)
-        self.tf_root = "base_footprint"
-
-
-packageName = "tp-rrt"
-
-#~ urdfName = "buggy"	
-urdfSuffix = ""
-srdfSuffix = ""
-rootJointType = "planar"
-
-
-#~ def loadRobot(urdfName):	
-	#~ client= BasicClient()
-	#~ return client.robot.loadRobotModel(urdfName, rootJointType, packageName, urdfName, urdfSuffix, srdfSuffix)
-

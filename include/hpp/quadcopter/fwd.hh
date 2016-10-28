@@ -22,12 +22,17 @@
 # include <hpp/util/pointer.hh>
 # include <hpp/core/fwd.hh>
 
+namespace mav_planning_utils {
+  template <int N> class PolynomialTrajectory;
+}
+
 namespace hpp {
   namespace quadcopter {
     HPP_PREDEF_CLASS (FlatPath);
     typedef boost::shared_ptr <FlatPath> FlatPathPtr_t;
     HPP_PREDEF_CLASS (SteeringMethod);
     typedef boost::shared_ptr <SteeringMethod> SteeringMethodPtr_t;
+
     typedef core::value_type value_type;
     typedef model::Device Device_t;
     typedef model::DevicePtr_t DevicePtr_t;

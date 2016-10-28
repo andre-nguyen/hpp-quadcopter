@@ -24,42 +24,41 @@
 # include <hpp/model/device.hh>
 # include <hpp/core/path.hh>
 
+/// TODO remove me
+namespace mav_planning_utils {
+    template <int N> class PolynomialTrajectory
+    {};
+}
+
 namespace hpp {
   namespace quadcopter {
-    /// Linear interpolation between two configurations
-    ///
-    /// Degrees of freedom are interpolated depending on the type of
-    /// \link hpp::model::Joint joint \endlink
-    /// they parameterize:
-    ///   \li linear interpolation for translation joints, bounded rotation
-    ///       joints, and translation part of freeflyer joints,
-    ///   \li angular interpolation for unbounded rotation joints,
-    ///   \li constant angular velocity for SO(3) part of freeflyer joints.
+    /// Interpolation for a quadcopter.
     class HPP_QUADCOPTER_DLLAPI FlatPath : public core::Path
     {
     public:
       typedef core::Path parent_t;
+
+      static const int N = 10;
+
+      typedef mav_planning_utils::PolynomialTrajectory<N> Trajectory_t;
+      typedef mav_planning_utils::PolynomialTrajectory<2> YawTrajectory_t;
+
       /// Destructor
       virtual ~FlatPath () throw () {}
 
       /// Create instance and return shared pointer
       /// \param device Robot corresponding to configurations
-      /// \param init, end Start and end configurations of the path
       /// \param distanceBetweenAxes Distance between front and rear wheel axes.
       static FlatPathPtr_t create (const model::DevicePtr_t& device,
-				   ConfigurationIn_t init,
-				   ConfigurationIn_t end,
-				   value_type distanceBetweenAxes);
+				   const Trajectory_t& traj,
+				   const YawTrajectory_t& yawTraj);
 
       /// Create instance and return shared pointer
       /// \param device Robot corresponding to configurations
-      /// \param init, end Start and end configurations of the path
-      /// \param distanceBetweenAxes Distance between front and rear wheel axes.
       /// \param constraints the path is subject to
       static FlatPathPtr_t create (const DevicePtr_t& device,
-				   ConfigurationIn_t init,
-				   ConfigurationIn_t end,
-				   value_type distanceBetweenAxes,
+				   const Trajectory_t& traj,
+				   const YawTrajectory_t& yawTraj,
 				   ConstraintSetPtr_t constraints);
 
       /// Create copy and return shared pointer
@@ -102,39 +101,21 @@ namespace hpp {
 	return createCopy (weak_.lock (), constraints);
       }
 
-      /// Modify initial configuration
-      /// \param initial new initial configuration
-      /// \pre input configuration should be of the same size as current initial
-      /// configuration
-      void initialConfig (ConfigurationIn_t initial)
-      {
-	assert (initial.size () == initial_.size ());
-	initial_ = initial;
-      }
-
-      /// Modify end configuration
-      /// \param end new end configuration
-      /// \pre input configuration should be of the same size as current end
-      /// configuration
-      void endConfig (ConfigurationIn_t end)
-      {
-	assert (end.size () == end_.size ());
-	end_ = end;
-      }
-
       /// Return the internal robot.
       DevicePtr_t device () const;
 
       /// Get the initial configuration
       Configuration_t initial () const
       {
-        return initial_;
+        // FIXME
+        return Configuration_t();
       }
 
       /// Get the final configuration
       Configuration_t end () const
       {
-        return end_;
+        // FIXME
+        return Configuration_t();
       }
 
     protected:
@@ -144,18 +125,21 @@ namespace hpp {
 	os << "FlatPath:" << std::endl;
 	os << "interval: [ " << timeRange ().first << ", "
 	   << timeRange ().second << " ]" << std::endl;
-	os << "initial configuration: " << initial_.transpose () << std::endl;
-	os << "final configuration:   " << end_.transpose () << std::endl;
+	os << "initial configuration: " << initial().transpose () << std::endl;
+	os << "final configuration:   " << end().transpose () << std::endl;
 	return os;
       }
+
       /// Constructor
-      FlatPath (const DevicePtr_t& robot, ConfigurationIn_t init,
-		    ConfigurationIn_t end, value_type distanceBetweenAxes);
+      FlatPath (const DevicePtr_t& robot,
+          const Trajectory_t& traj,
+          const YawTrajectory_t& yaw);
 
       /// Constructor with constraints
-      FlatPath (const DevicePtr_t& robot, ConfigurationIn_t init,
-		    ConfigurationIn_t end, value_type distanceBetweenAxes,
-		    ConstraintSetPtr_t constraints);
+      FlatPath (const DevicePtr_t& robot,
+          const Trajectory_t& traj,
+          const YawTrajectory_t& yaw,
+          ConstraintSetPtr_t constraints);
 
       /// Copy constructor
       FlatPath (const FlatPath& path);
@@ -176,17 +160,11 @@ namespace hpp {
 				 value_type param) const;
 
     private:
-      /// Compute coefficient of polynomial defining the trajectory of the flat
-      /// output.
-      void computeCoefficients ();
-      /// Check that steering angle does not get out of bounds along a path.
-      void checkSteeringAngle ();
       DevicePtr_t device_;
-      Configuration_t initial_;
-      Configuration_t end_;
-      value_type distanceBetweenAxes_;
-      /// Coefficients of the polynomial flat output
-      std::vector <vector2_t> P_;
+
+      Trajectory_t traj_;
+      YawTrajectory_t yawTraj_;
+
       FlatPathWkPtr_t weak_;
     }; // class FlatPath
   } //   namespace quadcopter

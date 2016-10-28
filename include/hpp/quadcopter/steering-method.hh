@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 CNRS
+// Copyright (c) 2016 CNRS
 // Authors: Joseph Mirabel
 //
 // This file is part of hpp-quadcopter
@@ -64,9 +64,9 @@ namespace hpp {
       virtual PathPtr_t impl_compute (ConfigurationIn_t q1,
 				      ConfigurationIn_t q2) const
       {
-	PathPtr_t path = FlatPath::create (device_.lock (), q1, q2,
-					   distanceBetweenAxes_,
-					   constraints ());
+	PathPtr_t path;
+	// PathPtr_t path = FlatPath::create (device_.lock (), q1, q2,
+					   // constraints ());
 	return path;
       }
     protected:
@@ -75,12 +75,11 @@ namespace hpp {
       SteeringMethod (const ProblemPtr_t& problem) :
 	core::SteeringMethod (problem), device_ (problem->robot ()), weak_ ()
 	{
-	  computeDistanceBetweenAxes ();
 	}
       /// Copy constructor
       SteeringMethod (const SteeringMethod& other) :
 	core::SteeringMethod (other), device_ (other.device_),
-	distanceBetweenAxes_ (other.distanceBetweenAxes_), weak_ ()
+	weak_ ()
 	{
 	}
 
@@ -91,41 +90,7 @@ namespace hpp {
 	weak_ = weak;
       }
     private:
-      void computeDistanceBetweenAxes ()
-      {
-        JointPtr_t root (device_.lock ()->rootJoint ());
-        // Test that kinematic chain is as expected
-        if (!dynamic_cast <model::JointTranslation <2>* > (root)) {
-	  throw std::runtime_error ("root joint should be of type "
-				    "model::JointTranslation <2>");
-	}
-	if (root->numberChildJoints () != 1) {
-	  throw std::runtime_error ("Root joint should have one child");
-	}
-	JointPtr_t orientation (root->childJoint (0));
-	if (!dynamic_cast <model::jointRotation::UnBounded*> (orientation)) {
-	  throw std::runtime_error ("second joint should be of type "
-				    "model::jointRotation::Unbounded");
-	}
-	if (orientation->numberChildJoints () != 1) {
-	  throw std::runtime_error ("Orientation joint should have one child");
-	}
-	JointPtr_t steeringAngle (orientation->childJoint (0));
-        if (!dynamic_cast <model::jointRotation::Bounded*> (steeringAngle)) {
-	  throw std::runtime_error ("Steering angle joint should be of type "
-				    "model::jointRotation::Unbounded");
-	}
-	const Transform3f& frontWheel (steeringAngle->positionInParentFrame ());
-	const vector3_t& frontWheelPosition (frontWheel.getTranslation ());
-	value_type y = frontWheelPosition [1];
-	value_type z = frontWheelPosition [2];
-	distanceBetweenAxes_ = sqrt (y*y + z*z);
-	hppDout (info, "distanceBetweenAxes_ = " << distanceBetweenAxes_);
-      }
-
       DeviceWkPtr_t device_;
-      // distance between front and rear wheel axes.
-      value_type distanceBetweenAxes_;
       SteeringMethodWkPtr_t weak_;
     }; // SteeringMethod
     /// \}

@@ -17,6 +17,8 @@
 // <http://www.gnu.org/licenses/>.
 
 #include <hpp/quadcopter/steering-method.hh>
+#include <hpp/quadcopter/configuration-shooter.hh>
+
 #include <hpp/core/problem-solver.hh>
 #include <hpp/corbaserver/server.hh>
 
@@ -32,6 +34,9 @@ int main (int argc, const char* argv[])
   // Add new steering method in factory
   problemSolver->add <hpp::core::SteeringMethodBuilder_t>
     ("Quadcopter",	hpp::quadcopter::SteeringMethod::create);
+  // Add new steering method in factory
+  problemSolver->add <hpp::core::ConfigurationShooterBuilder_t>
+    ("Quadcopter",	hpp::quadcopter::ConfigurationShooter::create);
 
   // Create the CORBA server.
   hpp::corbaServer::Server server (problemSolver, argc, argv, true);

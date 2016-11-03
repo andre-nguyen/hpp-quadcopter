@@ -32,6 +32,8 @@ namespace hpp {
     typedef boost::shared_ptr <FlatPath> FlatPathPtr_t;
     HPP_PREDEF_CLASS (SteeringMethod);
     typedef boost::shared_ptr <SteeringMethod> SteeringMethodPtr_t;
+    HPP_PREDEF_CLASS (ConfigurationShooter);
+    typedef boost::shared_ptr <ConfigurationShooter> ConfigurationShooterPtr_t;
 
     typedef core::value_type value_type;
     typedef model::Device Device_t;

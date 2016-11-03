@@ -90,7 +90,9 @@ SET(${PROJECT_NAME}_HEADERS
   # include/mav_planning_utils/yaml_io.h
 
   include/hpp/quadcopter/fwd.hh
+  include/hpp/quadcopter/flat-path.hh
   include/hpp/quadcopter/steering-method.hh
+  include/hpp/quadcopter/configuration-shooter.hh
   )
 
 ADD_SUBDIRECTORY(src)
@@ -113,6 +115,7 @@ install(FILES
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/srdf
   )
 install(FILES
+  data/meshes/quadrotor_base.dae
   data/meshes/scene.stl
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
   )

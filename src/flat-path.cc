@@ -133,8 +133,10 @@ namespace hpp {
       result.head<3>   (  ) = mav_state.position_W;
       result           ( 3) = mav_state.orientation_W_B.w();
       result.segment<3>( 4) = mav_state.orientation_W_B.vec();
+      assert (state.velocity_W.isApprox(mav_state.velocity_W));
       result.segment<3>( 7) = mav_state.velocity_W;
-      result.segment<3>(10) = mav_state.angular_velocity_B;
+      result.segment<3>(10) = state.acceleration_W;
+      result.segment<3>(13) = state.jerk_W;
 
       return true;
     }

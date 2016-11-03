@@ -33,6 +33,7 @@ vf(q)
 ps.setInitialConfig (q_init)
 # ps.addGoalConfig (q_goal)
 ps.addGoalConfig (q)
+ps.selectPathValidation ("Discretized", 0.02)
 ps.selectSteeringMethod      ("Quadcopter")
 ps.client.problem.selectConFigurationShooter("Quadcopter")
 

@@ -117,6 +117,7 @@ install(FILES
 install(FILES
   data/meshes/quadrotor_base.dae
   data/meshes/scene.stl
+  data/meshes/scene1.stl
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/meshes
   )
 install (FILES

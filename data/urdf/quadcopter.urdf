@@ -3,8 +3,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <!--<mesh filename="package://tp-rrt/meshes/scene.stl"/>-->
-        <box size="0.1 0.1 0.05" />
+        <mesh filename="package://hpp-quadcopter/meshes/quadrotor_base.dae"/>
       </geometry>
       <material name="white">
         <color rgba="1 1 1 1"/>
@@ -13,8 +12,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size="0.1 0.1 0.05" />
-        <!--<mesh filename="package://tp-rrt/meshes/scene.stl"/>-->
+        <mesh filename="package://hpp-quadcopter/meshes/quadrotor_base.dae"/>
       </geometry>
     </collision>
   </link>

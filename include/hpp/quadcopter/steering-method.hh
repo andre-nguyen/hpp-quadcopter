@@ -27,6 +27,10 @@
 # include <hpp/util/debug.hh>
 # include <hpp/util/pointer.hh>
 
+namespace mav_planning_utils {
+  struct NonlinearOptimizationParameters;
+}
+
 namespace hpp {
   namespace quadcopter {
     /// \addtogroup steering_method
@@ -37,6 +41,8 @@ namespace hpp {
     class HPP_QUADCOPTER_DLLAPI SteeringMethod : public core::SteeringMethod
     {
     public:
+      virtual ~SteeringMethod ();
+
       /// Create instance and return shared pointer
       static SteeringMethodPtr_t create (const ProblemPtr_t& problem)
       {
@@ -78,13 +84,11 @@ namespace hpp {
 	}
 
       /// Store weak pointer to itself
-      void init (SteeringMethodWkPtr_t weak)
-      {
-        core::SteeringMethod::init (weak);
-	weak_ = weak;
-      }
+      void init (SteeringMethodWkPtr_t weak);
     private:
       DeviceWkPtr_t device_;
+      bool linear_;
+      mav_planning_utils::NonlinearOptimizationParameters* param_;
       SteeringMethodWkPtr_t weak_;
     }; // SteeringMethod
     /// \}

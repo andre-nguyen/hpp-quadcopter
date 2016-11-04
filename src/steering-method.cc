@@ -45,11 +45,12 @@ namespace hpp {
       };
 
       template <bool linear, int N, typename Derived>
-      void computeSegments (
+      bool computeSegments (
           const Eigen::MatrixBase<Derived>& q1,
           const Eigen::MatrixBase<Derived>& q2,
           const value_type& distance,
-          typename mav_planning_utils::Segment<N>::Vector& segments)
+          typename mav_planning_utils::Segment<N>::Vector& segments,
+          const mav_planning_utils::NonlinearOptimizationParameters& nlOptParam)
       {
         using namespace mav_planning_utils;
         Vertex::Vector vertices;
@@ -84,32 +85,36 @@ namespace hpp {
 
           opt.getSegments(&segments);
         } else {
-          NonlinearOptimizationParameters nlOptParam;
-
-          nlOptParam.max_iterations = 1000;
-          nlOptParam.f_rel = 0.05;
-          nlOptParam.x_rel = 0.1;
-          nlOptParam.time_penalty = 500.0;
-          nlOptParam.initial_stepsize_rel = 0.1;
-          nlOptParam.inequality_constraint_tolerance = 0.1;
-          // nlOptParam.algorithm = nlopt::GN_ORIG_DIRECT;
-          // nlOptParam.algorithm = nlopt::GN_ORIG_DIRECT_L;
-          // nlOptParam.algorithm = nlopt::GN_ISRES;
-          nlOptParam.algorithm = nlopt::LN_COBYLA;
-
           PolynomialOptimizationNonLinear<N> nlopt(dimension, nlOptParam, true);
           nlopt.setupFromVertices(vertices, segment_times, derivative_to_optimize);
           // nlopt.addMaximumMagnitudeConstraint(derivative_order::VELOCITY, 2);
           // nlopt.addMaximumMagnitudeConstraint(derivative_order::ACCELERATION, 2);
           nlopt.optimize();
 
-          // std::stringstream ss;
-          // OptimizationInfo info = nlopt.getOptimizationInfo();
-          // info.print(ss);
-          // hppDout (info, "NLopt Finished: \n" << ss.str());
+          OptimizationInfo info = nlopt.getOptimizationInfo();
 
+          switch (info.stopping_reason) {
+            case nlopt::SUCCESS:
+            case nlopt::FTOL_REACHED:
+            case nlopt::XTOL_REACHED:
+              break;
+            case nlopt::FAILURE:
+            case nlopt::INVALID_ARGS:
+            case nlopt::OUT_OF_MEMORY:
+            case nlopt::ROUNDOFF_LIMITED:
+            case nlopt::FORCED_STOP:
+            case nlopt::STOPVAL_REACHED:
+            case nlopt::MAXEVAL_REACHED:
+            case nlopt::MAXTIME_REACHED:
+            default:
+              std::stringstream ss;
+              info.print(ss);
+              hppDout (warning, "NLopt Finished: \n" << ss.str());
+              return false;
+          }
           nlopt.getPolynomialOptimizationRef().getSegments(&segments);
         }
+        return true;
       }
 
       template <typename Derived>
@@ -129,13 +134,55 @@ namespace hpp {
       }
     }
 
+    SteeringMethod::~SteeringMethod ()
+    {
+      delete param_;
+    }
+
+    void SteeringMethod::init (SteeringMethodWkPtr_t weak)
+    {
+      core::SteeringMethod::init (weak);
+      weak_ = weak;
+
+      linear_ = problem_->getParameter<bool>("Quadcopter_linear_opt", false);
+
+      param_ = new mav_planning_utils::NonlinearOptimizationParameters;
+      param_->max_iterations = 1000;
+      // param_-> = problem_->getParameter<int>("NLPolyOpt_", -1);
+      param_->print_debug_info = problem_->getParameter<bool>("NLPolyOpt_print_debug_info", false);
+
+      param_->f_abs = problem_->getParameter<double>("NLPolyOpt_f_abs", -1);
+      param_->f_rel = problem_->getParameter<double>("NLPolyOpt_f_rel", 0.05);
+      param_->x_abs = problem_->getParameter<double>("NLPolyOpt_x_abs", -1);
+      param_->x_rel = problem_->getParameter<double>("NLPolyOpt_x_rel", 0.1);
+
+      param_->max_iterations                  = problem_->getParameter<int>("NLPolyOpt_max_iterations", 1000);
+      param_->time_penalty                    = problem_->getParameter<double>("NLPolyOpt_time_penalty", 500.0);
+      param_->initial_stepsize_rel            = problem_->getParameter<double>("NLPolyOpt_initial_stepsize_rel", 0.1);
+      param_->inequality_constraint_tolerance = problem_->getParameter<double>("NLPolyOpt_inequality_constraint_tolerance", 0.1);
+
+      // Define the algorithm.
+      std::string algo = problem_->getParameter<std::string>("NLPolyOpt_algo", "LN_COBYLA");
+      if (algo == "GN_ORIG_DIRECT")
+        param_->algorithm = nlopt::GN_ORIG_DIRECT;
+      else if (algo == "GN_ORIG_DIRECT_L")
+        param_->algorithm = nlopt::GN_ORIG_DIRECT_L;
+      else if (algo == "GN_ISRES")
+        param_->algorithm = nlopt::GN_ISRES;
+      else if (algo == "LN_COBYLA")
+        param_->algorithm = nlopt::LN_COBYLA;
+      else
+        throw std::invalid_argument ("Unknow algorithm");
+    }
+
     PathPtr_t SteeringMethod::impl_compute (ConfigurationIn_t q1,
         ConfigurationIn_t q2) const
     {
       value_type distance = problem_->distance()->operator() (q1, q2);
 
       mav_planning_utils::Segment<FlatPath::N>::Vector segments;
-      computeSegments <false, FlatPath::N> (q1, q2, distance, segments);
+      if (!computeSegments <false, FlatPath::N> (q1, q2, distance, segments, *param_))
+        return PathPtr_t ();
 
       // Sample the trajectory
       FlatPath::TrajectoryPtr_t trajectory (new FlatPath::Trajectory_t(dimension, segments));

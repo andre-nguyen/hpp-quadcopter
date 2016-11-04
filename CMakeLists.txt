@@ -44,6 +44,7 @@ ADD_REQUIRED_DEPENDENCY("hpp-core >= 3")
 ADD_REQUIRED_DEPENDENCY("hpp-corbaserver >= 3")
 ADD_REQUIRED_DEPENDENCY("hpp-util")
 
+ADD_REQUIRED_DEPENDENCY("nlopt")
 ADD_REQUIRED_DEPENDENCY("libglog")
 
 # Declare Headers

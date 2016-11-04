@@ -27,9 +27,9 @@ ADD_EXECUTABLE (hpp-quadcopter-server
 
   mav_planning_utils/motion_defines.cpp
   # mav_planning_utils/ros_trajectory_interface.cpp
-  # mav_planning_utils/rpoly.cpp
+  mav_planning_utils/rpoly.cpp # Non-linear optimization
   # mav_planning_utils/rviz_drawing.cpp
-  # mav_planning_utils/timing.cpp
+  mav_planning_utils/timing.cpp # Non-linear optimization
   mav_planning_utils/trajectory_sampling.cpp
   mav_planning_utils/trajectory_types.cpp
 )
@@ -41,6 +41,7 @@ set_property(TARGET hpp-quadcopter-server PROPERTY CXX_STANDARD_REQUIRED ON)
 # Link executable with hpp-corbaserver library
 PKG_CONFIG_USE_DEPENDENCY (hpp-quadcopter-server hpp-corbaserver)
 PKG_CONFIG_USE_DEPENDENCY (hpp-quadcopter-server libglog)
+PKG_CONFIG_USE_DEPENDENCY (hpp-quadcopter-server nlopt)
 
 # Install executable
 INSTALL (TARGETS hpp-quadcopter-server DESTINATION ${CMAKE_INSTALL_BINDIR})

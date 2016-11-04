@@ -125,7 +125,7 @@ namespace hpp {
       if (param < timeRange ().first)
         param = timeRange().first;
       else if (param >= timeRange ().second)
-        param = timeRange ().second - (timeRange().second - timeRange().first) * 1e-5;
+        param = timeRange ().second;
 
       mav_planning_utils::sampleTrajectory(*traj_, *yawTraj_, param, &state);
       mav_msgs::EigenMavStateFromEigenTrajectoryPoint(state, &mav_state);

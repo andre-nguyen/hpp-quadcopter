@@ -23,8 +23,6 @@
 
 # include <hpp/core/path.hh>
 
-# include <mav_planning_utils/polynomial_trajectory.h>
-
 # include <hpp/quadcopter/config.hh>
 # include <hpp/quadcopter/fwd.hh>
 
@@ -42,21 +40,21 @@ namespace hpp {
       typedef mav_planning_utils::PolynomialTrajectory<2> YawTrajectory_t;
 
       /// Destructor
-      virtual ~FlatPath () throw () {}
+      virtual ~FlatPath () throw ();
 
       /// Create instance and return shared pointer
       /// \param device Robot corresponding to configurations
       /// \param distanceBetweenAxes Distance between front and rear wheel axes.
       static FlatPathPtr_t create (const model::DevicePtr_t& device,
-				   const Trajectory_t& traj,
-				   const YawTrajectory_t& yawTraj);
+				   Trajectory_t* traj,
+				   YawTrajectory_t* yawTraj);
 
       /// Create instance and return shared pointer
       /// \param device Robot corresponding to configurations
       /// \param constraints the path is subject to
       static FlatPathPtr_t create (const DevicePtr_t& device,
-				   const Trajectory_t& traj,
-				   const YawTrajectory_t& yawTraj,
+				   Trajectory_t* traj,
+				   YawTrajectory_t* yawTraj,
 				   ConstraintSetPtr_t constraints);
 
       /// Create copy and return shared pointer
@@ -132,13 +130,13 @@ namespace hpp {
 
       /// Constructor
       FlatPath (const DevicePtr_t& robot,
-          const Trajectory_t& traj,
-          const YawTrajectory_t& yaw);
+          Trajectory_t* traj,
+          YawTrajectory_t* yaw);
 
       /// Constructor with constraints
       FlatPath (const DevicePtr_t& robot,
-          const Trajectory_t& traj,
-          const YawTrajectory_t& yaw,
+          Trajectory_t* traj,
+          YawTrajectory_t* yaw,
           ConstraintSetPtr_t constraints);
 
       /// Copy constructor
@@ -162,8 +160,8 @@ namespace hpp {
     private:
       DevicePtr_t device_;
 
-      Trajectory_t traj_;
-      YawTrajectory_t yawTraj_;
+      Trajectory_t* traj_;
+      YawTrajectory_t* yawTraj_;
 
       FlatPathWkPtr_t weak_;
     }; // class FlatPath

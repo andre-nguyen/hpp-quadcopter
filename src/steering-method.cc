@@ -73,10 +73,10 @@ namespace hpp {
       opt.getSegments(&segments);
 
       // Sample the trajectory
-      FlatPath::Trajectory_t trajectory(dimension, segments);
+      FlatPath::Trajectory_t* trajectory = new FlatPath::Trajectory_t(dimension, segments);
 
-      double tmin = trajectory.getMinTime();
-      double tmax = trajectory.getMaxTime();
+      double tmin = trajectory->getMinTime();
+      double tmax = trajectory->getMaxTime();
       // std::cout << tmin << ", " << tmax << std::endl;
 
       // Yaw trajectory is linear
@@ -89,7 +89,7 @@ namespace hpp {
           // yawFromQuaternion(Eigen::Quaternion<value_type>(q2[3],q2[4],q2[5],q2[6])));
       yaw_segments[0][0].setCoefficients(coeffs);
       yaw_segments[0].setTime(tmax - tmin); // or only tmax ?
-      FlatPath::YawTrajectory_t yaw_trajectory(1, yaw_segments);
+      FlatPath::YawTrajectory_t* yaw_trajectory = new FlatPath::YawTrajectory_t(1, yaw_segments);
 
       PathPtr_t path = FlatPath::create (device_.lock (), trajectory, yaw_trajectory);
       // std::cout << (path->initial() - q1).transpose() << std::endl;

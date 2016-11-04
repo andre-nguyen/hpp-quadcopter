@@ -18,19 +18,25 @@
 
 #include <hpp/quadcopter/flat-path.hh>
 
+#include <mav_msgs/conversions.h>
+#include <mav_planning_utils/polynomial_trajectory.h>
+#include <mav_planning_utils/trajectory_sampling.h>
+
 #include <hpp/util/debug.hh>
 
 #include <hpp/model/device.hh>
 
-#include <mav_msgs/conversions.h>
-#include <mav_planning_utils/trajectory_sampling.h>
-
 namespace hpp {
   namespace quadcopter {
+    FlatPath::~FlatPath () throw ()
+    {
+      delete traj_;
+      delete yawTraj_;
+    }
 
     FlatPathPtr_t FlatPath::create (const model::DevicePtr_t& device,
-				    const Trajectory_t& traj,
-				    const YawTrajectory_t& yawTraj)
+				    Trajectory_t* traj,
+				    YawTrajectory_t* yawTraj)
     {
       FlatPath* ptr = new FlatPath (device, traj, yawTraj);
       FlatPathPtr_t shPtr (ptr);
@@ -43,8 +49,8 @@ namespace hpp {
     }
 
     FlatPathPtr_t FlatPath::create (const DevicePtr_t& device,
-				    const Trajectory_t& traj,
-				    const YawTrajectory_t& yawTraj,
+				    Trajectory_t* traj,
+				    YawTrajectory_t* yawTraj,
 				    ConstraintSetPtr_t constraints)
     {
       FlatPath* ptr = new FlatPath (device, traj, yawTraj,
@@ -67,10 +73,10 @@ namespace hpp {
     }
 
     FlatPath::FlatPath (const DevicePtr_t& device,
-			const Trajectory_t& traj,
-			const YawTrajectory_t& yawTraj) :
+			Trajectory_t* traj,
+			YawTrajectory_t* yawTraj) :
       parent_t (
-          interval_t (traj.getMinTime(), traj.getMaxTime()),
+          interval_t (traj->getMinTime(), traj->getMaxTime()),
           device->configSize (), device->numberDof ()),
       device_ (device),
       traj_ (traj), yawTraj_ (yawTraj)
@@ -80,11 +86,11 @@ namespace hpp {
     }
 
     FlatPath::FlatPath (const DevicePtr_t& device,
-			const Trajectory_t& traj,
-			const YawTrajectory_t& yawTraj,
+			Trajectory_t* traj,
+			YawTrajectory_t* yawTraj,
 			ConstraintSetPtr_t constraints) :
       parent_t (
-          interval_t (traj.getMinTime(), traj.getMaxTime()),
+          interval_t (traj->getMinTime(), traj->getMaxTime()),
           device->configSize (), device->numberDof (), constraints),
       device_ (device),
       traj_ (traj), yawTraj_ (yawTraj)
@@ -126,7 +132,7 @@ namespace hpp {
         param -= (timeRange().second - timeRange().first) * 1e-5;
       }
 
-      mav_planning_utils::sampleTrajectory(traj_, yawTraj_, param, &state);
+      mav_planning_utils::sampleTrajectory(*traj_, *yawTraj_, param, &state);
       mav_msgs::EigenMavStateFromEigenTrajectoryPoint(state, &mav_state);
       // std::cout << sampling_time << "\t: " << mav_state.toString() << std::endl;
 

@@ -81,6 +81,7 @@ Eigen::VectorXd PolynomialTrajectory<N>::evaluateImpl(
     // chosen,
     // hence accumulated_segment_time_ns > t_start
     if (accumulated_segment_time_ns > t_ns) break;
+    if (std::next(it) == segments_.end()) break;
   }
   const double accumulated_segment_time =
       std::chrono::duration_cast<TimeDoubleS>(accumulated_segment_time_ns)

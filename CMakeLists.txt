@@ -48,47 +48,6 @@ ADD_REQUIRED_DEPENDENCY("libglog")
 
 # Declare Headers
 SET(${PROJECT_NAME}_HEADERS
-  include/mav_msgs/common.h
-  include/mav_msgs/conversions.h
-  include/mav_msgs/default_topics.h
-  include/mav_msgs/default_values.h
-  include/mav_msgs/eigen_mav_msgs.h
-
-  include/mav_planning_utils/deprecated/conversions.h
-  include/mav_planning_utils/deprecated/motion4D.h
-  include/mav_planning_utils/deprecated/path_planning.h
-  include/mav_planning_utils/deprecated/path_planning_types.h
-  include/mav_planning_utils/deprecated/polynomial_normalized.h
-  include/mav_planning_utils/deprecated/polynomial_optimizer.h
-  include/mav_planning_utils/deprecated/redheffer_star_product.h
-  include/mav_planning_utils/deprecated/segment_planning.h
-  include/mav_planning_utils/deprecated/segment_planning_normalized.h
-  include/mav_planning_utils/deprecated/solvers.h
-  include/mav_planning_utils/deprecated/uncoupled_motion.h
-
-  include/mav_planning_utils/augmented_cost.h
-  include/mav_planning_utils/dynamic_model.hpp
-  include/mav_planning_utils/helper.h
-
-  include/mav_planning_utils/implementation/polynomial_optimization_impl.h
-  include/mav_planning_utils/implementation/polynomial_optimization_nonlinear_impl.h
-  include/mav_planning_utils/implementation/polynomial_trajectory_impl.h
-  include/mav_planning_utils/implementation/sincos.h
-  include/mav_planning_utils/implementation/trajectory_types_impl.h
-  include/mav_planning_utils/motion_defines.h
-  include/mav_planning_utils/polynomial.h
-  include/mav_planning_utils/polynomial_optimization.h
-  include/mav_planning_utils/polynomial_optimization_nonlinear.h
-  include/mav_planning_utils/polynomial_trajectory.h
-  include/mav_planning_utils/random_vector.h
-  # include/mav_planning_utils/ros_trajectory_interface.h
-  # include/mav_planning_utils/rpoly.h
-  # include/mav_planning_utils/timing.h
-  include/mav_planning_utils/trajectory_base.h
-  include/mav_planning_utils/trajectory_sampling.h
-  include/mav_planning_utils/trajectory_types.h
-  # include/mav_planning_utils/yaml_io.h
-
   include/hpp/quadcopter/fwd.hh
   include/hpp/quadcopter/flat-path.hh
   include/hpp/quadcopter/steering-method.hh

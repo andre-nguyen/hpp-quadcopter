@@ -28,15 +28,9 @@
 
 namespace hpp {
   namespace quadcopter {
-    FlatPath::~FlatPath () throw ()
-    {
-      delete traj_;
-      delete yawTraj_;
-    }
-
     FlatPathPtr_t FlatPath::create (const model::DevicePtr_t& device,
-				    Trajectory_t* traj,
-				    YawTrajectory_t* yawTraj)
+				    TrajectoryPtr_t traj,
+				    YawTrajectoryPtr_t yawTraj)
     {
       FlatPath* ptr = new FlatPath (device, traj, yawTraj);
       FlatPathPtr_t shPtr (ptr);
@@ -49,8 +43,8 @@ namespace hpp {
     }
 
     FlatPathPtr_t FlatPath::create (const DevicePtr_t& device,
-				    Trajectory_t* traj,
-				    YawTrajectory_t* yawTraj,
+				    TrajectoryPtr_t traj,
+				    YawTrajectoryPtr_t yawTraj,
 				    ConstraintSetPtr_t constraints)
     {
       FlatPath* ptr = new FlatPath (device, traj, yawTraj,
@@ -73,8 +67,8 @@ namespace hpp {
     }
 
     FlatPath::FlatPath (const DevicePtr_t& device,
-			Trajectory_t* traj,
-			YawTrajectory_t* yawTraj) :
+			TrajectoryPtr_t traj,
+			YawTrajectoryPtr_t yawTraj) :
       parent_t (
           interval_t (traj->getMinTime(), traj->getMaxTime()),
           device->configSize (), device->numberDof ()),
@@ -86,8 +80,8 @@ namespace hpp {
     }
 
     FlatPath::FlatPath (const DevicePtr_t& device,
-			Trajectory_t* traj,
-			YawTrajectory_t* yawTraj,
+			TrajectoryPtr_t traj,
+			YawTrajectoryPtr_t yawTraj,
 			ConstraintSetPtr_t constraints) :
       parent_t (
           interval_t (traj->getMinTime(), traj->getMaxTime()),

@@ -51,6 +51,7 @@ ADD_REQUIRED_DEPENDENCY("libglog")
 SET(${PROJECT_NAME}_HEADERS
   include/hpp/quadcopter/fwd.hh
   include/hpp/quadcopter/flat-path.hh
+  include/hpp/quadcopter/distance.hh
   include/hpp/quadcopter/steering-method.hh
   include/hpp/quadcopter/configuration-shooter.hh
   )

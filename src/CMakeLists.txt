@@ -21,6 +21,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 ADD_EXECUTABLE (hpp-quadcopter-server
   flat-path.cc
+  distance.cc
   steering-method.cc
   configuration-shooter.cc
   main.cc

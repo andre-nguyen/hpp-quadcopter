@@ -30,6 +30,8 @@ namespace hpp {
   namespace quadcopter {
     HPP_PREDEF_CLASS (FlatPath);
     typedef boost::shared_ptr <FlatPath> FlatPathPtr_t;
+    HPP_PREDEF_CLASS (Distance);
+    typedef boost::shared_ptr <Distance> DistancePtr_t;
     HPP_PREDEF_CLASS (SteeringMethod);
     typedef boost::shared_ptr <SteeringMethod> SteeringMethodPtr_t;
     HPP_PREDEF_CLASS (ConfigurationShooter);

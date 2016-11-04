@@ -18,6 +18,7 @@
 
 #include <hpp/quadcopter/steering-method.hh>
 #include <hpp/quadcopter/configuration-shooter.hh>
+#include <hpp/quadcopter/distance.hh>
 
 #include <hpp/core/problem-solver.hh>
 #include <hpp/corbaserver/server.hh>
@@ -34,9 +35,18 @@ int main (int argc, const char* argv[])
   // Add new steering method in factory
   problemSolver->add <hpp::core::SteeringMethodBuilder_t>
     ("Quadcopter",	hpp::quadcopter::SteeringMethod::create);
-  // Add new steering method in factory
+  // Add new configuration shooter in factory
   problemSolver->add <hpp::core::ConfigurationShooterBuilder_t>
     ("Quadcopter",	hpp::quadcopter::ConfigurationShooter::create);
+  // Add distance in factory
+  problemSolver->add <hpp::core::DistanceBuilder_t>
+    ("Quadcopter",	hpp::quadcopter::Distance::create);
+
+  problemSolver->distanceType             ("Quadcopter");
+  problemSolver->steeringMethodType       ("Quadcopter");
+  problemSolver->configurationShooterType ("Quadcopter");
+  problemSolver->pathPlannerType          ("BiRRTPlanner");
+  problemSolver->pathValidationType       ("Discretized", 0.02);
 
   // Create the CORBA server.
   hpp::corbaServer::Server server (problemSolver, argc, argv, true);

@@ -16,6 +16,8 @@
 
 # include <hpp/quadcopter/steering-method.hh>
 
+# include <hpp/core/distance.hh>
+
 # include <mav_planning_utils/polynomial_optimization_nonlinear.h>
 # include <mav_planning_utils/polynomial_optimization.h>
 # include <mav_planning_utils/polynomial_trajectory.h>
@@ -130,7 +132,7 @@ namespace hpp {
     PathPtr_t SteeringMethod::impl_compute (ConfigurationIn_t q1,
         ConfigurationIn_t q2) const
     {
-      value_type distance = (q1 - q2).head<3>().norm();
+      value_type distance = problem_->distance()->operator() (q1, q2);
 
       mav_planning_utils::Segment<FlatPath::N>::Vector segments;
       computeSegments <false, FlatPath::N> (q1, q2, distance, segments);
